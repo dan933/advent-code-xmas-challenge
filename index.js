@@ -6,18 +6,29 @@
 
 //second column what I should play in response
 // X = Rock
-// Y = Paper
+// Y = Papper
 // Z = Scissors
 
 //shape points
 //1 for rock
 //2 for paper
 //3 for Scissors
-
+//17599
 //points depending on outcome
 //0 for loss
 //3 for draw
 // 6 for win
+
+//secret code
+//X means you need to lose,
+//Y means you need to end the round in a draw
+//and Z means you need to win. Good luck!"
+
+let drawCalculation = {
+    A:'X',
+    B:'Y',
+    C:'Z'
+}
 
 function calcWinLooseValue(mySelection, winSelection){
     if(mySelection !== winSelection){
@@ -31,12 +42,8 @@ function calcWinLooseValue(mySelection, winSelection){
 //Calculate Win Loose or Draw Amount
 function winLooseDrawCalc(opponentSelection, mySelection) {
 
-    let drawCalculation = {
-        A:'X',
-        B:'Y',
-        C:'Z'
-    }
-
+    console.log('opponentSelection', opponentSelection)
+    console.log('mySelection', mySelection)
     //if Draw
    if(drawCalculation[opponentSelection] === mySelection){
     return 3;
@@ -72,6 +79,8 @@ function calcSelectionPoints(mySelection){
     }
 
 }
+
+
 
 const data = 
 `
@@ -2598,19 +2607,45 @@ while( i < data.length){
     }
 
     if(selectionCounter === 2){
-        console.log('elfSelection', elfSelection)
-        console.log('mySelection', mySelection)
+        //X loose//If Rock and elf paper or rock switch to scissors
+        if(mySelection === 'X' && elfSelection === 'A' ){
+            mySelection = 'Z'
+        } else
+        if(mySelection === 'X' && elfSelection === 'C' ){
+            mySelection = 'Y'
+        }else
+        
+       //Y draw //If papper and elf rock or scissors switch to the same as elf
+       if(mySelection === 'Y' && elfSelection !== 'B'){
+        mySelection = drawCalculation[elfSelection];
+       }else 
+
+       //Z win //If Scissors and elf rock switch to paper
+       if(mySelection === 'Z' && elfSelection === 'A'){
+        mySelection = 'Y'
+       } else
+
+       //If Scissors and elf is Scissors switch to rock
+       if(mySelection === 'Z' && elfSelection ==='C'){
+        mySelection = 'X'
+       }
+
+
         let winLooseDrawPoints = winLooseDrawCalc(elfSelection, mySelection);
         let selectionPoints = calcSelectionPoints(mySelection);
-        
+
+        // console.log('winLooseDrawPoints', winLooseDrawPoints)
+        // console.log('selectionPoints', selectionPoints)
         totalPoints += winLooseDrawPoints;
         totalPoints += selectionPoints;
         selectionCounter = 0;
     }
+    
 
     i++
 
 }
 
 console.log(totalPoints);
+
 
