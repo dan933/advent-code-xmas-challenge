@@ -24,36 +24,56 @@ const regSplitLines = /\n/
 //create an array of each rucksack
 const rucksackDataArr = rucksackData.split(regSplitLines);
 
+//elf group
+let elfGroup = []
 
-let total = 0;
 
-rucksackDataArr.forEach((rucksack) => {
-    //split rucksack into compartments
-    const compartmentOne = rucksack.slice(0, rucksack.length / 2 );
-    const compartmentTwo = rucksack.slice(rucksack.length / 2, rucksack.length);
+let specialTotal = 0;
 
-    //find the item that repeats
-    for(let i = 0; i < compartmentOne.length; i++){
+rucksackDataArr.forEach((rucksack, index) => {
 
-        //see if there is a match
-        const IsMatch = compartmentTwo.match(compartmentOne[i]);
+    //add rucksack to elfgroup
+    elfGroup.push(rucksack);
 
-        //if match
-        if(IsMatch){
+    // If last member of group
+    if ( elfGroup.length % 3 === 0 ){
+
+        // //check which chars are the same between  between group 1 and 2
+        for(let i = 0; i < elfGroup[0].length; i++){
             
-            const asciiValue = compartmentOne[i].charCodeAt()
-
-            //calculate letter to value
-            const rucksackValue = asciiValue >= 97 ? asciiValue - 96 : asciiValue - 38
-
-            total += rucksackValue;
-
+            //Find special key in all three groups
+            let charMatchGroupZeroOne = elfGroup[1].match(elfGroup[0][i]);
+            let charMatchGroupZeroTwo = elfGroup[2].match(elfGroup[0][i]);
             
-            break;
+            //if special key is found
+            if(charMatchGroupZeroOne && charMatchGroupZeroTwo){
+
+                //item that is in all three rucksacks
+                let specialChar = elfGroup[0][i];
+
+                const asciiValue = specialChar.charCodeAt()
+
+                //calculate letter to value
+                const rucksackValue = asciiValue >= 97 ? asciiValue - 96 : asciiValue - 38
+                specialTotal += rucksackValue;
+
+                //add value to total
+                
+
+                //break loop
+                break;
+            }
+            
         }
+
+        //reset elfgroup
+        elfGroup = [];
+
+
+
 
 
     }
 })
 
-console.log('total', total)
+console.log('specialTotal', specialTotal)
