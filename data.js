@@ -1,4 +1,4 @@
-const rucksackData = 
+const taskData = 
 `33-62,26-62
 49-89,49-88
 2-4,3-92
@@ -1000,4 +1000,4 @@ const rucksackData =
 31-37,37-72
 21-99,1-25`
 
-module.exports = rucksackData;
+module.exports = taskData;

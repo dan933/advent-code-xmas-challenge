@@ -27,7 +27,7 @@ cleanUpPairs.forEach((cleanTask) => {
 })
 
 
-let fullyContainedCounter = 0;
+let duplicateCounter = 0;
 
 //itterate through clean up tasks
 cleanUpTaskArray.forEach((taskGroup, index) => {
@@ -39,23 +39,25 @@ cleanUpTaskArray.forEach((taskGroup, index) => {
         let firstTasks = cleanUpTaskArray[index - 1];
         let secondTasks = taskGroup;
 
-        //if first tasks is the longer array
-        if(firstTasks.length > secondTasks.length){
-
-            if( firstTasks[0] <= secondTasks[0] &&
-                firstTasks[firstTasks.length - 1] >= secondTasks[secondTasks.length - 1]){
-
-                    fullyContainedCounter++
+        if(firstTasks.length >= secondTasks.length){
+            //itterate over longest array
+            for( let i = 0; i < firstTasks.length; i++ ) {
+                if(secondTasks.includes(firstTasks[i])){
+                    duplicateCounter++
+                    break;
+                }
             }
-        }else if ( secondTasks[0] <= firstTasks[0] && 
-                    secondTasks[secondTasks.length - 1] >= firstTasks[firstTasks.length - 1] ){
 
-                        fullyContainedCounter++
-                    }
-        
+        } else if(secondTasks.length > firstTasks.length){
+            for( let i = 0; i < secondTasks.length; i++ ){
+                if(firstTasks.includes(secondTasks[i])){  
+                    duplicateCounter++
+                    break;
+                }
+                
+            }
+        }        
     }
 })
 
-
-// console.log('cleanUpTaskArray', cleanUpTaskArray)
-//console.log('fullyContainedCounter', fullyContainedCounter)
+console.log('duplicateCounter', duplicateCounter)
