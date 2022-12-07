@@ -1,63 +1,32 @@
 const data = require('./data.js')
 
-const regPair = /,|\n/
+const containers =  data.containers;
+const instructions = data.instructions;
 
-//split each task group
-let cleanUpPairs = data.split(regPair);
+const exampleContainers = data.exampleContainers;
+const exampleInstructions = data.exampleInstructions;
 
-
-cleanUpTaskArray = [];
-
-//itterate through the clean up pairs
-cleanUpPairs.forEach((cleanTask) => {
+//iterate over the instructions
+instructions.forEach((instruction) => {
     
-    const tasks = [];
+    let itemMoved;
 
-    const regFirstTask = /\d+/g
-    const taskArray =  cleanTask.match(regFirstTask)
-    const firstTask =taskArray[0];
-    const lastTask = taskArray[1];
+    //itterate over the number of moves
+    for(let i = 0; i < instruction.move; i++){
 
-    for(let i = +firstTask; i <= +lastTask; i++){
-        tasks.push(i)
-    }
+        //remove from container
+        itemMoved = containers[instruction.from - 1].shift();
 
-    cleanUpTaskArray.push(tasks);
-
-})
-
-
-let duplicateCounter = 0;
-
-//itterate through clean up tasks
-cleanUpTaskArray.forEach((taskGroup, index) => {
-    let groupNumber = (index + 1)
-
-    if( groupNumber % 2 == 0){
-
-        //get the group tasks
-        let firstTasks = cleanUpTaskArray[index - 1];
-        let secondTasks = taskGroup;
-
-        if(firstTasks.length >= secondTasks.length){
-            //itterate over longest array
-            for( let i = 0; i < firstTasks.length; i++ ) {
-                if(secondTasks.includes(firstTasks[i])){
-                    duplicateCounter++
-                    break;
-                }
-            }
-
-        } else if(secondTasks.length > firstTasks.length){
-            for( let i = 0; i < secondTasks.length; i++ ){
-                if(firstTasks.includes(secondTasks[i])){  
-                    duplicateCounter++
-                    break;
-                }
-                
-            }
-        }        
+        //Add to new container
+        containers[instruction.to - 1].unshift(itemMoved);
     }
 })
 
-console.log('duplicateCounter', duplicateCounter)
+let topCreateCode = '';
+
+containers.forEach((container) =>
+{
+        topCreateCode += container[0];
+});
+
+console.log('topCreateCode', topCreateCode)
