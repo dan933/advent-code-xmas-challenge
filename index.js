@@ -9,17 +9,15 @@ const exampleInstructions = data.exampleInstructions;
 //iterate over the instructions
 instructions.forEach((instruction) => {
     
-    let itemMoved;
+    let itemsMoved;
 
-    //itterate over the number of moves
-    for(let i = 0; i < instruction.move; i++){
+    let startIndex = 0;
 
-        //remove from container
-        itemMoved = containers[instruction.from - 1].shift();
+    let endIndex = instruction.move;
 
-        //Add to new container
-        containers[instruction.to - 1].unshift(itemMoved);
-    }
+    //remove from container
+    itemsMoved = containers[instruction.from - 1].splice(startIndex, endIndex);
+    containers[instruction.to - 1] = itemsMoved.concat(containers[instruction.to - 1]);
 })
 
 let topCreateCode = '';
