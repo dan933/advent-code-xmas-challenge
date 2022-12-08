@@ -10,7 +10,7 @@ let counter = 0;
 let markerArray = [];
 
 //while loop to itterate over the stream
-while(markerArray.length < 4){
+while(markerArray.length < 14){
 
     //current stream char
     let currentStream = stream[counter]
@@ -29,7 +29,7 @@ while(markerArray.length < 4){
     }
 
     //if marker has signal found
-    if(markerArray.length === 4){
+    if(markerArray.length === 14){
         break;    
     }
     
