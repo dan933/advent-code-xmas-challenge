@@ -1,140 +1,182 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using System.Text.RegularExpressions;
-
 var elvesData = new ElvesData();
 
 var linesArray = elvesData.puzzleInput.Split('\n');
 
-int directoryLevel = 0;
+//Console.WriteLine(storageUsed);
 
-int directoryIndex = 0;
+var currentIndex = 0;
+var directoryIndex = 0;
+var cdBackCount = 0;
+var directoryLevel = 0;
+int cdBackIndex;
 
-var elvesDirectoryDictionary = new Dictionary<int, ElvesDirectory>();
 
+var dictionary = new Dictionary<int, ElvesDirectory>();
 
-//itterate through storage directories/files
-for (var i = 0; i < linesArray.Length; i++)
+var newDirectory = new ElvesDirectory(
+    CalculationService.GetDirName(linesArray[currentIndex]),
+    directoryLevel,
+    new List<ChildDirectory>(),
+    0,
+    -1,
+    currentIndex
+    );
+
+dictionary.Add(currentIndex, newDirectory);
+
+for (int i = 1; i < linesArray.Length; i++)
 {
-    //add main directory to dictionary
-    if (i == 0)
+    //If current line command is cd ..
+    if (ValidationService.IsCDBackward(linesArray[i]))
     {
-        elvesDirectoryDictionary.Add(directoryIndex,
-            new ElvesDirectory("mainDirectory", directoryLevel, new List<string>(), 0)
-        );
+        //track the number of cd..
+        ++cdBackCount;
 
-        continue;
+        //decrease the directory level
+        --directoryLevel;
+    }
+    else
+    {
+        //if command line is not cd ..
+        //make cd back the current index
+        cdBackIndex = currentIndex;
+
+        //run through the number of cd backs
+        while(cdBackCount > 0)
+        {
+            //make the file size
+            var fileSize = dictionary[cdBackIndex].DirectorySize;
+            
+            //make cdbackindex the parent of the current cdbackindex
+            cdBackIndex = dictionary[cdBackIndex].ParentIndex;
+
+            
+            //add the fileSize to the parent
+            dictionary[cdBackIndex].DirectorySize += fileSize;
+
+            //decrement cd back count
+            cdBackCount--;
+            
+        }
     }
 
-    //if item is current directory is moving forward
-    var directoryName = linesArray[i];
-    var IsCDForward = ValidationService.IsCDForward(directoryName);
-
-    if (IsCDForward)
+    //If command line is a directory
+    if (ValidationService.IsDir(linesArray[i]))
     {
-        //replace $ cd with the name of the directory
-        var pattern = @"\$ cd";
-        directoryName = Regex.Replace(directoryName, pattern, "dir");
-
-        //increment directory level
-        ++directoryLevel;
-
         //increment directory index
         ++directoryIndex;
 
-        //add new ElvesDirectory to elvesDirectoryDictionary
-        elvesDirectoryDictionary.Add(directoryIndex,
-            new ElvesDirectory(directoryName, directoryLevel, new List<string>(), 0)
-        );
-
+        //create the directory as a child of the current directory
+        dictionary[currentIndex].ChildDirectoryList
+            .Add(
+             new ChildDirectory(
+                 directoryIndex,
+                 linesArray[i],
+                 directoryLevel + 1,
+                 currentIndex
+                 )
+            );
     }
 
-    //if item is current directory is moving back
-    var IsCDBackward = ValidationService.IsCDBackward(linesArray[i]);
-    if (IsCDBackward)
+    if (ValidationService.IsCDForward(linesArray[i]))
     {
-        //decrement directory level
-        --directoryLevel;
+        // convert cd dirName to dir dirName
+        var directoryName = CalculationService.GetDirName(linesArray[i]);
+
+        //find the parent with the directory name
+        //parent with the closest index and IsUsed of child has to be true
+        var parent = dictionary
+            .Where(x => x.Value.ChildDirectoryList
+                .Where(c => c.DirName == directoryName)
+                .Where(c => !c.IsUsed).Any())
+            .OrderByDescending(x => x.Value.DirectoryIndex)
+            .First();
+
+        
+
+        var childDirectoryRef = parent.Value.ChildDirectoryList
+            .Where(x => x.DirName == directoryName)
+            .First();
+
+        var parentIndex = parent.Value.DirectoryIndex;
+        currentIndex = childDirectoryRef.DirIndex;
+
+        //create new directory
+        newDirectory = new ElvesDirectory(
+            directoryName,
+            childDirectoryRef.DirLevel,
+            new List<ChildDirectory>(),
+            0,
+            parentIndex,
+            currentIndex
+            );
+
+        //Add to dictionary
+        dictionary.Add(childDirectoryRef.DirIndex, newDirectory);
+
+        parent.Value.ChildDirectoryList
+            .Where(x => x.DirName == directoryName)
+            .First().IsUsed = true;
     }
 
-    var IsDirectory = ValidationService.IsDir(linesArray[i]);
-
-    //if item is a directory
-    if (IsDirectory)
+    if (ValidationService.IsFile(linesArray[i]))
     {
-        //get the currentDirectory values
-        var currentDirectory = elvesDirectoryDictionary[directoryIndex];
-
-        //add the new directory to the currentDirectory directory list
-        currentDirectory.DirectoryList.Add(linesArray[i]);
-
-        //update the dictionary
-        elvesDirectoryDictionary[directoryIndex] = currentDirectory;
-
-        continue;
-    }
-
-    //if item is a file
-    var IsFile = ValidationService.IsFile(linesArray[i]);
-
-    if (IsFile)
-    {
-        // update currentDirectory size total
-        var currentDirectory = elvesDirectoryDictionary[directoryIndex];
-
-        //get filesize
         var fileSize = CalculationService.GetFileSize(linesArray[i]);
 
-        currentDirectory.DirectorySize += fileSize;
-
-        elvesDirectoryDictionary[directoryIndex] = currentDirectory;
+        dictionary[currentIndex].DirectorySize += fileSize;
     }
+
 }
 
-var elvesDictionaryLength = elvesDirectoryDictionary.Count - 1;
+cdBackIndex = dictionary.Last().Value.DirectoryIndex;
 
-//itterate in reverse key order
-for (int i = elvesDictionaryLength; i >= 0; i -= 1)
+//run through the number of cd backs
+while (cdBackIndex != -1)
 {
-    //child directory
-    var childDirectory = elvesDirectoryDictionary[i];
 
-    //get child directory name
-    var childDirectoryName = childDirectory.DirectoryName;
 
-    //check if child has parent
-    var parentDirectory = elvesDirectoryDictionary
-        .Where(x =>
-        x.Value.DirectoryList.Contains(childDirectoryName) &&
-        x.Value.DirectoryLevel + 1 == childDirectory.DirectoryLevel
-        )
-        .FirstOrDefault();
+    //make the file size
+    var fileSize = dictionary[cdBackIndex].DirectorySize;
 
-    //if child has parent
-    // and parent is one level above child
-    if (parentDirectory.Value != null &&
-        parentDirectory.Value.DirectoryLevel + 1 == childDirectory.DirectoryLevel)
+    //make cdbackindex the parent of the current cdbackindex
+    cdBackIndex = dictionary[cdBackIndex].ParentIndex;
+
+    if (cdBackIndex == -1)
     {
-        //Add child directory size to parent
-        parentDirectory.Value.DirectorySize += childDirectory.DirectorySize;
-
-        //remove child from parent
-        parentDirectory.Value.DirectoryList.Remove(childDirectoryName);
-
-        //update parent
-        elvesDirectoryDictionary[parentDirectory.Key] = parentDirectory.Value;
+        break;
     }
 
+
+    //add the fileSize to the parent
+    dictionary[cdBackIndex].DirectorySize += fileSize;
 }
 
-var filteredDirectories = elvesDirectoryDictionary
+
+
+
+// part 1
+
+var total = dictionary
     .Where(x => x.Value.DirectorySize <= 100000)
-    .ToList();
+    .Sum(x => x.Value.DirectorySize);
 
-var totalSize = 0;
-foreach (var item in filteredDirectories)
-{
-    totalSize += item.Value.DirectorySize;
-}
 
-Console.WriteLine($"Total Size: {totalSize}");
+//part 2
+var availableDiskSpace = 70000000;
+var requiredUpdateSpace = 30000000;
+var usedDiskSpace = dictionary[0].DirectorySize;
+
+var currentFreeSpace = availableDiskSpace - usedDiskSpace;
+
+var freeSpaceNeeded = requiredUpdateSpace - currentFreeSpace;
+
+
+var fileToDelete = dictionary
+    .Where(x => x.Value.DirectorySize >= freeSpaceNeeded)
+    .Select(x => new { x.Value.DirectorySize })
+    .OrderBy(x => x.DirectorySize)
+    .FirstOrDefault();
+
+Console.WriteLine(fileToDelete);

@@ -17,4 +17,11 @@ public class CalculationService
         }
         return fileSize;
     }
+
+    public static string GetDirName(string commandLine)
+    {
+        var pattern = @"^\$ cd";
+        var directoryName = Regex.Replace(commandLine, pattern, "dir");
+        return directoryName;
+    }
 }
