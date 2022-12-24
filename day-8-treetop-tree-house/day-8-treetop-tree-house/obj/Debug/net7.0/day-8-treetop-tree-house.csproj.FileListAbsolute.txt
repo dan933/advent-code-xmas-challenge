@@ -1,0 +1,15 @@
+C:\Users\dnadi\Desktop\elves\day-8-treetop-tree-house\day-8-treetop-tree-house\bin\Debug\net7.0\day-8-treetop-tree-house.exe
+C:\Users\dnadi\Desktop\elves\day-8-treetop-tree-house\day-8-treetop-tree-house\bin\Debug\net7.0\day-8-treetop-tree-house.deps.json
+C:\Users\dnadi\Desktop\elves\day-8-treetop-tree-house\day-8-treetop-tree-house\bin\Debug\net7.0\day-8-treetop-tree-house.runtimeconfig.json
+C:\Users\dnadi\Desktop\elves\day-8-treetop-tree-house\day-8-treetop-tree-house\bin\Debug\net7.0\day-8-treetop-tree-house.dll
+C:\Users\dnadi\Desktop\elves\day-8-treetop-tree-house\day-8-treetop-tree-house\bin\Debug\net7.0\day-8-treetop-tree-house.pdb
+C:\Users\dnadi\Desktop\elves\day-8-treetop-tree-house\day-8-treetop-tree-house\obj\Debug\net7.0\day-8-treetop-tree-house.csproj.AssemblyReference.cache
+C:\Users\dnadi\Desktop\elves\day-8-treetop-tree-house\day-8-treetop-tree-house\obj\Debug\net7.0\day-8-treetop-tree-house.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\dnadi\Desktop\elves\day-8-treetop-tree-house\day-8-treetop-tree-house\obj\Debug\net7.0\day-8-treetop-tree-house.AssemblyInfoInputs.cache
+C:\Users\dnadi\Desktop\elves\day-8-treetop-tree-house\day-8-treetop-tree-house\obj\Debug\net7.0\day-8-treetop-tree-house.AssemblyInfo.cs
+C:\Users\dnadi\Desktop\elves\day-8-treetop-tree-house\day-8-treetop-tree-house\obj\Debug\net7.0\day-8-treetop-tree-house.csproj.CoreCompileInputs.cache
+C:\Users\dnadi\Desktop\elves\day-8-treetop-tree-house\day-8-treetop-tree-house\obj\Debug\net7.0\day-8-treetop-tree-house.dll
+C:\Users\dnadi\Desktop\elves\day-8-treetop-tree-house\day-8-treetop-tree-house\obj\Debug\net7.0\refint\day-8-treetop-tree-house.dll
+C:\Users\dnadi\Desktop\elves\day-8-treetop-tree-house\day-8-treetop-tree-house\obj\Debug\net7.0\day-8-treetop-tree-house.pdb
+C:\Users\dnadi\Desktop\elves\day-8-treetop-tree-house\day-8-treetop-tree-house\obj\Debug\net7.0\day-8-treetop-tree-house.genruntimeconfig.cache
+C:\Users\dnadi\Desktop\elves\day-8-treetop-tree-house\day-8-treetop-tree-house\obj\Debug\net7.0\ref\day-8-treetop-tree-house.dll
