@@ -32,9 +32,11 @@ for (int treeLineIndex = 0; treeLineIndex < treeArray.Length; treeLineIndex++)
 
 var columnsLength = treeDictionary[0].Count();
 
+//Part 2
+var mostViews = 0;
+
 treeDictionary.ToList().ForEach(treeRow =>
-{
-    //I can find column index by treeRow.Key
+{    
     var columnIndex = 0;
     var rowIndex = treeRow.Key;
 
@@ -43,28 +45,55 @@ treeDictionary.ToList().ForEach(treeRow =>
     {
         treeRow.Value.ForEach(tree =>
             {
-            //Get current tree if it is in the inner grid
-            var currentTree = treeDictionary[rowIndex]
-            .Select((tree, index) => new { tree, index })
-            .Where(x => x.index == columnIndex)
-            .Where(x => x.index != 0 & x.index != columnsLength - 1)
-            .FirstOrDefault();
 
+                //Get current tree if it is in the inner grid
+                var currentTree = treeDictionary[rowIndex]
+                .Select((tree, index) => new { tree, index })
+                .Where(x => x.index == columnIndex)
+                .Where(x => x.index != 0 & x.index != columnsLength - 1)
+                .FirstOrDefault();
+
+
+                var currentViews = 0;
+                var maxViewReached = false;
+
+                var viewsLeft = 0;
+                var viewsRight = 0;
+                var viewsTop = 0;
+                var viewsBottom = 0;
 
                 if (currentTree != null)
                 {
+                    //Console.WriteLine($"Current Tree:{currentTree.tree}");
+
                     var IsSeenTop = true;
                     var IsSeenBottom = true;
                     var IsSeenLeft = true;
-                    var IsSeenRight = true;
+                    var IsSeenRight = true;                   
+
 
                     var leftOfTree = columnsLength - (columnsLength - currentTree.index);
 
                     ////check left current tree
                     treeDictionary[rowIndex]
                     .Take(leftOfTree)
+                    .Reverse()
                     .ToList().ForEach(x =>
                     {
+                        //part 2
+                        if(currentTree.tree <= x & !maxViewReached)
+                        {
+                            viewsLeft += 1;
+                            maxViewReached = true;
+
+                        }
+                        
+                        if(currentTree.tree > x & !maxViewReached)
+                        {
+                            viewsLeft += 1;
+                        }
+
+
                         if (currentTree.tree <= x)
                         {
                             IsSeenLeft = false;
@@ -73,20 +102,39 @@ treeDictionary.ToList().ForEach(treeRow =>
 
                     var rightOfTree = currentTree.index + 1;
 
+                    maxViewReached = false;
+
                     //check right current tree
                     treeDictionary[rowIndex]
                     .Skip(rightOfTree)
                     .ToList().ForEach(x =>
                     {
+                        //Console.WriteLine(x);
+
+                        //part 2
+                        if (currentTree.tree <= x & !maxViewReached)
+                        {
+                            viewsRight += 1;
+                            maxViewReached = true;
+                        }
+                        
+                        if (currentTree.tree > x & !maxViewReached)
+                        {
+                            viewsRight += 1;
+                        }
+
                         if (currentTree.tree <= x)
                         {
                             IsSeenRight = false;
                         }
                     });
 
+                    maxViewReached = false;
+
                     ////check Above current tree
                     treeDictionary
                         .Where(x => x.Key < rowIndex)
+                        .Reverse()
                         .ToList()
                         .ForEach(x =>
                             x.Value
@@ -95,12 +143,29 @@ treeDictionary.ToList().ForEach(treeRow =>
                             .ToList()
                                 .ForEach(x =>
                                 {
+
+                                    //Console.WriteLine(x);
+
+                                    //part 2
+                                    if (currentTree.tree <= x.tree & !maxViewReached)
+                                    {
+                                        viewsTop += 1;
+                                        maxViewReached = true;
+                                    }
+                                    
+                                    if (currentTree.tree > x.tree & !maxViewReached)
+                                    {
+                                        viewsTop += 1;
+                                    }
+
                                     if (currentTree.tree <= x.tree)
                                     {
                                         IsSeenTop = false;
                                     }
                                 })
                         );
+
+                    maxViewReached = false;
 
                     //check Below current tree
                     treeDictionary
@@ -113,6 +178,19 @@ treeDictionary.ToList().ForEach(treeRow =>
                             .ToList()
                             .ForEach(x =>
                                 {
+                                    //Console.WriteLine(x);
+
+                                    //part 2
+                                    if (currentTree.tree <= x.tree & !maxViewReached)
+                                    {
+                                        viewsBottom += 1;
+                                        maxViewReached = true;
+                                    }
+                                    else if (currentTree.tree > x.tree & !maxViewReached)
+                                    {
+                                        viewsBottom += 1;
+                                    }
+
                                     if (currentTree.tree <= x.tree)
                                     {
                                         IsSeenBottom = false;
@@ -120,6 +198,14 @@ treeDictionary.ToList().ForEach(treeRow =>
 
                             })
                         );
+
+                    //part 2
+                    currentViews = viewsBottom * viewsTop * viewsLeft * viewsRight;
+
+                    if(currentViews > mostViews)
+                    {
+                        mostViews = currentViews;
+                    }
 
                     if (IsSeenBottom | IsSeenTop | IsSeenLeft | IsSeenRight)
                     {
@@ -133,5 +219,7 @@ treeDictionary.ToList().ForEach(treeRow =>
     }
 
 });
+
+Console.WriteLine($"MostViews: {mostViews}");
 
 Console.WriteLine($"Seen Trees: {seenTrees}");
